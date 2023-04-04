@@ -1,16 +1,28 @@
 import {useState} from 'react'
 
 import './App.css'
+import {Route, Routes} from "react-router-dom";
+import Home from "./pages/Home.jsx";
+import Layout from "./components/Layout.jsx";
+import Profile from "./pages/Profile.jsx";
+import SignIn from "./pages/SignIn.jsx";
+import SignUp from "./pages/SignUp.jsx";
+import Offers from "./pages/Offers.jsx";
+import ForgotPassword from "./pages/forgotPassword";
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold underline">
-        Hello world!
-      </h1>
-    </div>
+    <Routes>
+      <Route path="/" element={<Layout/>}>
+        <Route index element={<Home/>}/>
+        <Route path='/profile' element={<Profile/>}/>
+        <Route path="/sign-in" element={<SignIn/>}/>
+        <Route path="/sing-up" element={<SignUp/>}/>
+        <Route path="/offers" element={<Offers/>}/>
+        <Route path="/forgot-password" element={<ForgotPassword/>}/>
+      </Route>
+    </Routes>
   )
 }
 
