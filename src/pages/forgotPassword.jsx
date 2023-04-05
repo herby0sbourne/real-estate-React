@@ -1,16 +1,14 @@
-import React, {useState} from 'react';
-import welcomeImg from "../assets/welcome.jpg";
-import {AiFillEye, AiFillEyeInvisible} from "react-icons/ai";
-import {Link} from "react-router-dom";
-import OAuth from "../components/OAuth.jsx";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import welcomeImg from '../assets/welcome.jpg';
+import OAuth from '../components/OAuth.jsx';
 
 const forgotPassword = () => {
-  const [formData, setFormData] = useState({email: ''});
-  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({ email: '' });
 
   const handleChange = (e) => {
-    const {name, value} = e.target;
-    setFormData((prevValue) => ({...prevValue, [name]: value}));
+    const { name, value } = e.target;
+    setFormData((prevValue) => ({ ...prevValue, [name]: value }));
   };
 
   return (
@@ -18,7 +16,7 @@ const forgotPassword = () => {
       <h1 className="text-3xl text-center mt-6 font-bold">Forgot Password</h1>
       <div className="flex justify-center flex-wrap items-center px-6 py-12 max-w-6xl mx-auto lg:gap-x-[50px]">
         <div className="md:w-[67%] lg:w-[50%] mb-12 mb:mb-6 overflow-hidden rounded-2xl">
-          <img src={`${welcomeImg}`} alt="welcome"/>
+          <img src={`${welcomeImg}`} alt="welcome" />
         </div>
         <div className="w-full md:w-[67%] lg:w-[40%]">
           <form className="flex flex-col gap-6">
@@ -51,16 +49,14 @@ const forgotPassword = () => {
               Reset Password
             </button>
           </form>
-          <div
-            className="my-4 flex items-center before:border-t before:flex-1 before:border-gray-500 after:border-t after:flex-1 after:border-gray-500">
+          <div className="my-4 flex items-center before:border-t before:flex-1 before:border-gray-500 after:border-t after:flex-1 after:border-gray-500">
             <p className="text-center font-semibold mx-4">OR</p>
           </div>
-          <OAuth/>
+          <OAuth />
         </div>
       </div>
     </section>
   );
-
-}
+};
 
 export default forgotPassword;
