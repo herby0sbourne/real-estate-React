@@ -1,14 +1,30 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import welcomeImg from '../assets/welcome.jpg';
 import OAuth from '../components/OAuth.jsx';
+
+import { notify } from '../utils/notification';
+import { resetPassword } from '../utils/firebase';
+
+import welcomeImg from '../assets/welcome.jpg';
 
 const forgotPassword = () => {
   const [formData, setFormData] = useState({ email: '' });
+  const { email } = formData;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevValue) => ({ ...prevValue, [name]: value }));
+  };
+
+  const handleOnSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      await resetPassword(email);
+      notify('success', 'Email was sent');
+    } catch (error) {
+      notify('error', 'Could not send reset password');
+    }
   };
 
   return (
@@ -19,12 +35,12 @@ const forgotPassword = () => {
           <img src={`${welcomeImg}`} alt="welcome" />
         </div>
         <div className="w-full md:w-[67%] lg:w-[40%]">
-          <form className="flex flex-col gap-6">
+          <form className="flex flex-col gap-6" onSubmit={handleOnSubmit}>
             <input
               className="w-full px-4 py-2 text-xl text-gray-700 bg-white border-gray-300 rounded"
               type="email"
               name="email"
-              value={formData.email}
+              value={email}
               placeholder="Email Address"
               onChange={handleChange}
             />
