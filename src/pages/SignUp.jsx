@@ -27,7 +27,7 @@ const SignUp = () => {
       notify('success', 'successfully signed up', id);
       navigate('/');
     } catch (error) {
-      notify('error', 'error creating user');
+      notify('error', 'error creating user', id);
       // const errorCode = error.code;
       // const errorMessage = error.message;
       console.log(error);
