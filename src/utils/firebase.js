@@ -1,7 +1,13 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from 'firebase/app';
-import { doc, getDoc, getFirestore, setDoc } from 'firebase/firestore';
-import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import {initializeApp} from 'firebase/app';
+import {doc, getDoc, getFirestore, setDoc} from 'firebase/firestore';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  signInWithPopup,
+  GoogleAuthProvider
+} from 'firebase/auth';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -22,7 +28,7 @@ export const db = getFirestore();
 export const signUpUserWithEmailAndPassword = async (name, email, password) => {
   if (!email || !password) return;
   const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-  updateProfile(auth.currentUser, { displayName: name });
+  updateProfile(auth.currentUser, {displayName: name});
   return userCredential;
 };
 
@@ -33,11 +39,11 @@ export const addUserToDatabase = async (userAuth, additionalData = {}) => {
   const userSnapshot = await getDoc(userDocRef);
 
   if (!userSnapshot.exists()) {
-    const { displayName, email } = userAuth;
+    const {displayName, email} = userAuth;
     const createdAt = new Date();
 
     try {
-      await setDoc(userDocRef, { email, createdAt, ...additionalData });
+      await setDoc(userDocRef, {name: displayName, email, createdAt, ...additionalData});
     } catch (error) {
       console.log(error.message);
       console.log(error);
@@ -46,3 +52,7 @@ export const addUserToDatabase = async (userAuth, additionalData = {}) => {
 
   return userDocRef;
 };
+
+const googleProvider = new GoogleAuthProvider()
+
+export const signUpWithGooglePopup = () => signInWithPopup(auth, googleProvider)
