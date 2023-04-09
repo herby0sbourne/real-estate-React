@@ -8,6 +8,7 @@ import {
   updateProfile,
   signInWithPopup,
   GoogleAuthProvider,
+  sendPasswordResetEmail,
 } from 'firebase/auth';
 
 // Your web app's Firebase configuration
@@ -37,6 +38,18 @@ export const signInUserWithEmailAndPassword = async (email, password) => {
   if ((!email, !password)) return;
 
   return await signInWithEmailAndPassword(auth, email, password);
+};
+
+export const resetPassword = async (email) => {
+  const actionCodeSettings = {
+    // URL you want to redirect back to. The domain (www.example.com) for
+    // this URL must be whitelisted in the Firebase Console.
+    url: 'http://127.0.0.1:5173/',
+    // This must be true for email link sign-in.
+  };
+  const info = await sendPasswordResetEmail(auth, email, actionCodeSettings);
+  console.log(info);
+  // await confirmPasswordReset('user@example.com', code);
 };
 
 export const addUserToDatabase = async (userAuth, additionalData = {}) => {
