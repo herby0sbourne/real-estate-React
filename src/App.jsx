@@ -1,4 +1,4 @@
-import {Route, Routes} from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Layout from './components/Layout.jsx';
 import Home from './pages/Home.jsx';
 import Profile from './pages/Profile.jsx';
@@ -8,17 +8,20 @@ import Offers from './pages/Offers.jsx';
 import ForgotPassword from './pages/forgotPassword';
 
 import './App.css';
+import PrivateRoute from './components/PrivateRoute.jsx';
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Layout/>}>
-        <Route index element={<Home/>}/>
-        <Route path="/profile" element={<Profile/>}/>
-        <Route path="/sign-in" element={<SignIn/>}/>
-        <Route path="/sign-up" element={<SignUp/>}/>
-        <Route path="/offers" element={<Offers/>}/>
-        <Route path="/forgot-password" element={<ForgotPassword/>}/>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Home />} />
+        <Route element={<PrivateRoute />}>
+          <Route path="/profile" element={<Profile />} />
+        </Route>
+        <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/offers" element={<Offers />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
       </Route>
     </Routes>
   );
