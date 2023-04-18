@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import OAuth from '../components/OAuth';
 
 import { notify } from '../utils/notification.js';
@@ -12,7 +12,10 @@ const SignIn = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const { email, password } = formData;
+  const location = useLocation();
   const navigate = useNavigate();
+
+  const from = location.state?.from?.pathname || '/';
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,9 +27,9 @@ const SignIn = () => {
     e.preventDefault();
     try {
       const { user } = await signInUserWithEmailAndPassword(email, password);
-      console.log(user);
+      // console.log(user);
       notify('success', 'successfully', id);
-      navigate('/');
+      navigate(from, { replace: true });
     } catch (error) {
       notify('error', 'error logging', id);
       console.log(error);
