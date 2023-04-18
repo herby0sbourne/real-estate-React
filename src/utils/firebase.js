@@ -9,6 +9,8 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   sendPasswordResetEmail,
+  onAuthStateChanged,
+  signOut,
 } from 'firebase/auth';
 
 // Your web app's Firebase configuration
@@ -78,6 +80,37 @@ export const addUserToDatabase = async (userAuth, additionalData = {}) => {
   return userDocRef;
 };
 
+// get user Promise Version
+export const getAuthState = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      (user) => {
+        resolve(user);
+        unsubscribe();
+      },
+      (error) => {
+        reject(error);
+        unsubscribe();
+      }
+    );
+  });
+};
+
+export const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = auth.onAuthStateChanged((userAuth) => {
+      unsubscribe();
+      resolve(userAuth);
+    }, reject);
+  });
+};
+
+// get user CallBack Version
+export const onAuthStateChangeListener = (callback) => onAuthStateChanged(auth, callback);
+
 const googleProvider = new GoogleAuthProvider();
+
+export const signUserOut = async () => await signOut(auth);
 
 export const signUpWithGooglePopup = () => signInWithPopup(auth, googleProvider);
