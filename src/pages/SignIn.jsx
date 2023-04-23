@@ -29,11 +29,15 @@ const SignIn = () => {
       const { user } = await signInUserWithEmailAndPassword(email, password);
       // console.log(user);
       notify('success', 'successfully', id);
-      navigate(from, { replace: true });
+      pushOnClick();
     } catch (error) {
       notify('error', 'error logging', id);
       console.log(error);
     }
+  };
+
+  const pushOnClick = () => {
+    navigate(from, { replace: true });
   };
 
   return (
@@ -105,7 +109,7 @@ const SignIn = () => {
           <div className="my-4 flex items-center before:border-t before:flex-1 before:border-gray-500 after:border-t after:flex-1 after:border-gray-500">
             <p className="text-center font-semibold mx-4">OR</p>
           </div>
-          <OAuth />
+          <OAuth pushOnClick={pushOnClick} />
         </div>
       </div>
     </section>
