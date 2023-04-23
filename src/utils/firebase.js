@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
-import { doc, getDoc, getFirestore, setDoc } from 'firebase/firestore';
+import { doc, getDoc, getFirestore, setDoc, updateDoc } from 'firebase/firestore';
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -78,6 +78,18 @@ export const addUserToDatabase = async (userAuth, additionalData = {}) => {
   }
 
   return userDocRef;
+};
+
+export const updateUserProfile = async (updateUser = {}) => {
+  const { name, email } = updateUser;
+  if (auth.currentUser.displayName !== name) {
+    //update displayName in firebase auth
+    await updateProfile(auth.currentUser, { displayName: name });
+
+    // update name in the firestore database
+    const docRef = doc(db, 'users', auth.currentUser.uid);
+    await updateDoc(docRef, { name: name });
+  }
 };
 
 // get user Promise Version
