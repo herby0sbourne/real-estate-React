@@ -80,8 +80,7 @@ export const addUserToDatabase = async (userAuth, additionalData = {}) => {
   return userDocRef;
 };
 
-export const updateUserProfile = async (updateUser = {}) => {
-  const { name, email } = updateUser;
+export const updateUserProfile = async (name) => {
   if (auth.currentUser.displayName !== name) {
     //update displayName in firebase auth
     await updateProfile(auth.currentUser, { displayName: name });

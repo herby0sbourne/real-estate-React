@@ -25,7 +25,7 @@ const Profile = () => {
 
   const updateUser = async () => {
     try {
-      await updateUserProfile(formValues);
+      await updateUserProfile(formValues.name);
       notify('success', 'profile updated successfully');
     } catch (error) {
       notify('error', 'Error updating Profile');
@@ -56,7 +56,7 @@ const Profile = () => {
               type="email"
               name="email"
               value={formValues.email}
-              disabled={!changeDetail}
+              disabled
               onChange={handleOnChange}
               className="w-full px-4 py-2 text-xl text-gray-700 bg-white border border-gray-300 rounded transition ease-in-out"
             />
