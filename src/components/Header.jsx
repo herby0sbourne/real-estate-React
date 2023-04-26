@@ -1,9 +1,17 @@
-import React from 'react';
-import {Link, NavLink} from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { UserContext } from '../context/UserContext';
 
 import 'react-toastify/dist/ReactToastify.css';
 
 const Header = () => {
+  const { currentUser } = useContext(UserContext);
+  const { pathname } = useLocation();
+
+  const activeRoute = (route) => {
+    if (route === pathname) return true;
+  };
+
   return (
     <div className="bg-white border-b shadow-sm sticky top-0 z-50">
       <header className="flex justify-between items-center max-w-6xl px-3 mx-auto h-[50px]">
@@ -19,31 +27,45 @@ const Header = () => {
         <nav>
           <ul className="flex items-center space-x-10 ">
             <li>
-              <NavLink
-                activeClassName="active"
-                className="py-3 font-semibold text-gray-400 border-b-transparent "
+              <Link
+                className={`${
+                  activeRoute('/') ? 'active' : ''
+                } py-3 font-semibold text-gray-400 border-b-transparent`}
                 to="/"
               >
                 Home
-              </NavLink>
+              </Link>
             </li>
             <li>
-              <NavLink
-                activeClassName="active"
-                className="py-3 font-semibold text-gray-400 border-b-transparent "
-                to="/sign-in"
+              <Link
+                className={`${
+                  activeRoute('/offers') ? 'active' : ''
+                } py-3 font-semibold text-gray-400 border-b-transparent`}
+                to="/offers"
               >
-                Sign In
-              </NavLink>
+                Offers
+              </Link>
             </li>
             <li>
-              <NavLink
-                activeClassName="active"
-                className="py-3 font-semibold text-gray-400 border-b-transparent"
-                to="/profile"
-              >
-                profile
-              </NavLink>
+              {currentUser ? (
+                <Link
+                  className={`${
+                    activeRoute('/profile') ? 'active' : ''
+                  } py-3 font-semibold text-gray-400 border-b-transparent`}
+                  to="/profile"
+                >
+                  profile
+                </Link>
+              ) : (
+                <Link
+                  className={`${
+                    activeRoute('/sign-in') ? 'active' : ''
+                  } py-3 font-semibold text-gray-400 border-b-transparent`}
+                  to="/sign-in"
+                >
+                  Sign In
+                </Link>
+              )}
             </li>
           </ul>
         </nav>
