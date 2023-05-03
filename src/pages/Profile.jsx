@@ -1,7 +1,9 @@
 import { useContext, useEffect, useRef, useState } from 'react';
-import { signUserOut, updateUserProfile } from '../utils/firebase';
-import { UserContext } from '../context/UserContext';
+import { Link } from 'react-router-dom';
+import { FcHome } from 'react-icons/fc';
 import { notify } from '../utils/notification';
+import { UserContext } from '../context/UserContext';
+import { signUserOut, updateUserProfile } from '../utils/firebase';
 
 const Profile = () => {
   const { currentUser } = useContext(UserContext);
@@ -81,6 +83,15 @@ const Profile = () => {
               </button>
             </div>
           </form>
+          <button className=" hover:shadow-lg w-full uppercase bg-blue-600 text-white shadow-md hover:bg-blue-700 transition duration-150 ease-in active:bg-blue-800">
+            <Link
+              to={'/create-listing'}
+              className="flex justify-center items-center gap-3 text-sm font-medium"
+            >
+              <FcHome className="text-3xl bg-red-200 rounded-full p-1 border-2" />
+              <p>Sell Or Rent</p>
+            </Link>
+          </button>
         </div>
       </section>
     </>
