@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { notify } from '../utils/notification';
+import getLocation from '../utils/geoLocation';
+import { createListing, imageUpload } from '../utils/firebase';
 
 const CreateListing = () => {
+  const [geoLocationEnabled, setGeoLocationEnabled] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const [progressbar, setProgressbar] = useState(0);
   const [formValues, setFormValues] = useState({
     saleOrRent: 'rent',
     name: '',
@@ -13,29 +21,29 @@ const CreateListing = () => {
     offer: false,
     price: 0,
     discountPrice: 0,
+    lat: 0,
+    lng: 0,
+    images: [],
   });
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
+    let boolean = null;
+
+    if (value === 'true') {
+      boolean = true;
+    }
+
+    if (value === 'false') {
+      boolean = false;
+    }
 
     setFormValues((preValue) => ({
       ...preValue,
-      [name]: value,
+      [name]: boolean ?? value,
     }));
   };
 
-  const parkingCheckbox = () => {
-    setFormValues((preValue) => ({
-      ...preValue,
-      parking: !formValues.parking,
-    }));
-  };
-  const furnishedCheckbox = () => {
-    setFormValues((preValue) => ({
-      ...preValue,
-      furnished: !formValues.furnished,
-    }));
-  };
   const offerCheckbox = () => {
     setFormValues((preValue) => ({
       ...preValue,
@@ -43,11 +51,89 @@ const CreateListing = () => {
     }));
   };
 
+  const imageFiles = (e) => {
+    setFormValues((preValue) => ({
+      ...preValue,
+      images: e.target.files,
+    }));
+  };
+
+  const handleOnSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    if (formValues.offer && !(+formValues.discountPrice < +formValues.price)) {
+      notify('error', 'discounted price needs be the less that regular price');
+      setLoading(false);
+      return;
+    }
+
+    if (formValues.images.length > 6) {
+      notify('error', 'no more that 6 Image allowed');
+      setLoading(false);
+      return;
+    }
+
+    let geoLocation = {};
+    // let location;
+
+    if (geoLocationEnabled) {
+      try {
+        const { lat, lng } = await getLocation(formValues.address);
+        geoLocation.lat = lat;
+        geoLocation.lng = lng;
+      } catch (error) {
+        setLoading(false);
+        notify('error', 'Please enter correct address');
+        console.log(error);
+        return;
+      }
+    } else {
+      geoLocation.lat = formValues.lat;
+      geoLocation.lng = formValues.lng;
+    }
+
+    const imgUrls = await Promise.all(
+      [...formValues.images].map(async (image) => {
+        return await imageUpload(image, setProgressbar);
+      })
+    ).catch((err) => {
+      console.log(err);
+      setLoading(false);
+      notify('error', 'failed to upload image');
+      return;
+    });
+
+    const updatedFormValues = {
+      ...formValues,
+      imgUrls,
+      geoLocation,
+      createdAt: new Date(),
+    };
+
+    delete updatedFormValues.images;
+    delete updatedFormValues.lat;
+    delete updatedFormValues.lng;
+    !updatedFormValues.offer && delete updatedFormValues.discountPrice;
+
+    try {
+      const doc = await createListing(updatedFormValues);
+      setLoading(false);
+      notify('success', 'Listing created successfully');
+      navigate(`/category/${updatedFormValues.saleOrRent}/${doc.id}`);
+    } catch (error) {
+      setLoading(false);
+      notify('error', 'failed to create listing');
+      console.log(error);
+    }
+
+    console.log(updatedFormValues);
+  };
   return (
     <main className="max-w-md px-2 mx-auto">
       <h1 className="text-3xl text-center mt-6 font-bold">Create Listing</h1>
-      <form className="checklist">
-        <p className="text-lg mt-6 font-semibold">Sell / Rent</p>
+      <form className="checklist" onSubmit={handleOnSubmit}>
+        <p className="text-lg mt-6 font-semibold">Sell / Rent </p>
         <div className="flex gap-7">
           <div className="w-full">
             <input
@@ -142,8 +228,7 @@ const CreateListing = () => {
               name="parking"
               id="parkingYes"
               value={true}
-              checked={formValues.parking === true}
-              onChange={parkingCheckbox}
+              onChange={handleOnChange}
             />
             <label
               htmlFor="parkingYes"
@@ -162,8 +247,7 @@ const CreateListing = () => {
               name="parking"
               id="parkingNo"
               value={false}
-              checked={formValues.parking === false}
-              onChange={parkingCheckbox}
+              onChange={handleOnChange}
             />
             <label
               htmlFor="parkingNo"
@@ -185,8 +269,7 @@ const CreateListing = () => {
               name="furnished"
               id="furnishedYes"
               value={true}
-              checked={formValues.furnished === true}
-              onChange={furnishedCheckbox}
+              onChange={handleOnChange}
             />
             <label
               htmlFor="furnishedYes"
@@ -205,8 +288,7 @@ const CreateListing = () => {
               name="furnished"
               id="furnishedNo"
               value={false}
-              checked={formValues.furnished === false}
-              onChange={furnishedCheckbox}
+              onChange={handleOnChange}
             />
             <label
               htmlFor="furnishedNo"
@@ -228,7 +310,7 @@ const CreateListing = () => {
               name="offers"
               id="offers"
               value={formValues.offer}
-              checked={formValues.offer === false}
+              // checked={formValues.offer === false}
               onChange={offerCheckbox}
             />
             <label
@@ -254,6 +336,36 @@ const CreateListing = () => {
             />
           </div>
         </div>
+        {!geoLocationEnabled && (
+          <div className="flex gap-7">
+            <div className="mb-6 w-1/2">
+              <p className="text-lg  mt-6 font-semibold">Latitude</p>
+              <input
+                type="number"
+                name="lat"
+                value={formValues.lat}
+                onChange={handleOnChange}
+                required
+                min="-90"
+                max="90"
+                className="block w-full px-4 py-2 text-xl text-gray-700 bg-white border-gray-300 rounded transition duration-150 ease-in-out focus:text-gray-700 text-center"
+              />
+            </div>
+            <div className="mb-6 w-1/2">
+              <p className="text-lg mt-6 font-semibold">Longitude</p>
+              <input
+                type="number"
+                name="lng"
+                value={formValues.lng}
+                onChange={handleOnChange}
+                required
+                min="-180"
+                max="180"
+                className="block w-full px-4 py-2 text-xl text-gray-700 bg-white border-gray-300 rounded transition duration-150 ease-in-out focus:text-gray-700 text-center"
+              />
+            </div>
+          </div>
+        )}
         <p className="text-lg mt-6 font-semibold">Description</p>
         <div className="flex gap-7">
           <div className="w-full">
@@ -274,7 +386,7 @@ const CreateListing = () => {
               value={formValues.price}
               onChange={handleOnChange}
               // placeholder="Property Cost"
-              min="1000"
+              min="2000"
               max="400000000"
               required
               className="block w-half px-4 py-2 text-xl text-gray-700 bg-white border-gray-300 rounded transition duration-150 ease-in-out focus:text-gray-700"
@@ -290,7 +402,7 @@ const CreateListing = () => {
               name="discountPrice"
               value={formValues.discountPrice}
               onChange={handleOnChange}
-              min="1000"
+              min={`${!formValues.offer ? '0' : '2000'}`}
               max="400000000"
               required={formValues.offer}
               className="block w-half px-4 py-2 text-xl text-gray-700 bg-white border-gray-300 rounded transition duration-150 ease-in-out focus:text-gray-700"
@@ -310,6 +422,7 @@ const CreateListing = () => {
               accept=".jpg,.png,.jpeg"
               required
               multiple
+              onChange={imageFiles}
               className="block w-full px-4 py-2 text-xl text-gray-700 bg-white border-gray-300 rounded transition duration-150 ease-in-out focus:text-gray-700"
             />
           </div>
@@ -318,7 +431,7 @@ const CreateListing = () => {
           type="submit"
           className="bg-blue-600 w-full text-white font-medium hover:bg-blue-800 mb-5 uppercase text-sm transition duration-150 ease-in-out shadow-md hover:shadow-lg"
         >
-          Create Listing
+          {loading ? 'uploading' : 'Create Listing'}
         </button>
       </form>
     </main>
