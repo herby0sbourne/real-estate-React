@@ -29,6 +29,24 @@ button {
   transition: border-color 0.25s;
 }
 
+img {
+  max-width: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+/* input:checked ~ label {
+  background-color: pink;
+} */
+
+input[name='saleOrRent'] {
+  display: none;
+}
+
+.checklist input[type='checkbox'] {
+  display: none;
+}
+
 /* button:hover {
   border-color: #646cff;
 } */
