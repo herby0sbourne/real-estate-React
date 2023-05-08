@@ -1,6 +1,15 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
-import { doc, getDoc, getFirestore, setDoc, updateDoc } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getFirestore,
+  setDoc,
+  updateDoc,
+} from 'firebase/firestore';
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -15,7 +24,7 @@ import {
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: 'AIzaSyCxD2ztG_C7NRgouS68YaXRxXvUP87ZS6U',
+  apiKey: 'AIzaSyCJlfot39UqPknm4Ql4WAEqt7Of8YlXsrM',
   authDomain: 'real-estate-3de9f.firebaseapp.com',
   projectId: 'real-estate-3de9f',
   storageBucket: 'real-estate-3de9f.appspot.com',
@@ -89,6 +98,40 @@ export const updateUserProfile = async (name) => {
     const docRef = doc(db, 'users', auth.currentUser.uid);
     await updateDoc(docRef, { name: name });
   }
+};
+
+export const createListing = async (property = {}) => {
+  const docRef = await addDoc(collection(db, 'listings'), { ...property });
+  return docRef;
+};
+
+export const imageUpload = (file, progressCallback) => {
+  return new Promise((resolve, reject) => {
+    const fileName = `${auth.currentUser.uid}-${Date.now()}`;
+    const storage = getStorage();
+    const storageRef = ref(storage, fileName);
+
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log(progress);
+        progressCallback(progress);
+      },
+      (error) => {
+        // Handle unsuccessful uploads
+        reject(error);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          progressCallback(100);
+          resolve(downloadURL);
+        });
+      }
+    );
+  });
 };
 
 // get user Promise Version
