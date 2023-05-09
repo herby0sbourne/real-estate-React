@@ -3,10 +3,13 @@ import { Link } from 'react-router-dom';
 import { FcHome } from 'react-icons/fc';
 import { notify } from '../utils/notification';
 import { UserContext } from '../context/UserContext';
-import { signUserOut, updateUserProfile } from '../utils/firebase';
+import ListingItem from '../components/ListingItem';
+import { signUserOut, updateUserProfile, userListing } from '../utils/firebase';
 
 const Profile = () => {
   const { currentUser } = useContext(UserContext);
+  const [userListings, setUserListings] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [formValues, setFormValues] = useState({
     name: currentUser.displayName,
     email: currentUser.email,
@@ -38,6 +41,17 @@ const Profile = () => {
     if (!changeDetail) return;
     ref.current.focus();
   }, [changeDetail]);
+
+  useEffect(() => {
+    setLoading(true);
+    const fetchUserListings = async () => {
+      const listings = await userListing();
+      setUserListings(listings);
+      setLoading(false);
+    };
+
+    fetchUserListings();
+  }, []);
 
   return (
     <>
@@ -94,6 +108,18 @@ const Profile = () => {
           </button>
         </div>
       </section>
+      <div className="max-w-6xl px-3 mt-6 mx-auto">
+        {!loading && userListings.length > 0 && (
+          <>
+            <h2 className="text-2xl text-center font-semibold">My Listing</h2>
+            <ul>
+              {userListings.map((listing) => {
+                return <ListingItem key={listing.id} listing={listing} />;
+              })}
+            </ul>
+          </>
+        )}
+      </div>
     </>
   );
 };
