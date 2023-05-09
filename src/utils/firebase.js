@@ -101,7 +101,10 @@ export const updateUserProfile = async (name) => {
 };
 
 export const createListing = async (property = {}) => {
-  const docRef = await addDoc(collection(db, 'listings'), { ...property });
+  const docRef = await addDoc(collection(db, 'listings'), {
+    userId: auth.currentUser.uid,
+    ...property,
+  });
   return docRef;
 };
 
