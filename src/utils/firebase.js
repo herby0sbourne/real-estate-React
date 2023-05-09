@@ -5,9 +5,13 @@ import {
   collection,
   doc,
   getDoc,
+  getDocs,
   getFirestore,
+  orderBy,
+  query,
   setDoc,
   updateDoc,
+  where,
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import {
@@ -106,6 +110,26 @@ export const createListing = async (property = {}) => {
     ...property,
   });
   return docRef;
+};
+
+export const userListing = async () => {
+  const listingRef = collection(db, 'listings');
+
+  const q = query(
+    listingRef,
+    where('userId', '==', auth.currentUser.uid),
+    orderBy('createdAt', 'desc')
+  );
+
+  const listings = [];
+
+  const querySnapshot = await getDocs(q);
+
+  querySnapshot.forEach((doc) => {
+    listings.push({ id: doc.id, ...doc.data() });
+  });
+
+  return listings;
 };
 
 export const imageUpload = (file, progressCallback) => {
