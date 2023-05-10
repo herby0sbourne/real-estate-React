@@ -76,7 +76,6 @@ const Profile = () => {
               onChange={handleOnChange}
               className="w-full px-4 py-2 text-xl text-gray-700 bg-white border border-gray-300 rounded transition ease-in-out"
             />
-
             <div className="flex items-center justify-between whitespace-nowrap text-sm sm:text-lg">
               <p>
                 Do you want to Edit?{' '}
@@ -112,7 +111,7 @@ const Profile = () => {
         {!loading && userListings.length > 0 && (
           <>
             <h2 className="text-2xl text-center font-semibold">My Listing</h2>
-            <ul>
+            <ul className="sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 mt-7">
               {userListings.map((listing) => {
                 return <ListingItem key={listing.id} listing={listing} />;
               })}
