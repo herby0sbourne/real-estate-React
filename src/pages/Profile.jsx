@@ -4,7 +4,12 @@ import { FcHome } from 'react-icons/fc';
 import { notify } from '../utils/notification';
 import { UserContext } from '../context/UserContext';
 import ListingItem from '../components/ListingItem';
-import { signUserOut, updateUserProfile, userListing } from '../utils/firebase';
+import {
+  deleteListing,
+  signUserOut,
+  updateUserProfile,
+  userListing,
+} from '../utils/firebase';
 
 const Profile = () => {
   const { currentUser } = useContext(UserContext);
@@ -52,6 +57,20 @@ const Profile = () => {
 
     fetchUserListings();
   }, []);
+
+  const onDelete = async (id) => {
+    await deleteListing(id);
+
+    const filteredListing = userListings.filter((listing) => {
+      return listing.id !== id;
+    });
+
+    setUserListings(filteredListing);
+    notify('success', 'Successfully deleted');
+  };
+  const onEdit = (id) => {
+    console.log('edit', id);
+  };
 
   return (
     <>
@@ -113,7 +132,14 @@ const Profile = () => {
             <h2 className="text-2xl text-center font-semibold">My Listing</h2>
             <ul className="sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 mt-7">
               {userListings.map((listing) => {
-                return <ListingItem key={listing.id} listing={listing} />;
+                return (
+                  <ListingItem
+                    key={listing.id}
+                    listing={listing}
+                    profile
+                    onDelete={() => onDelete(listing.id)}
+                  />
+                );
               })}
             </ul>
           </>
