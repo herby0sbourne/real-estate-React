@@ -1,11 +1,25 @@
 import React from 'react';
 import Moment from 'react-moment';
-import { Link } from 'react-router-dom';
-import { MdLocationOn } from 'react-icons/md';
+import { Link, useNavigate } from 'react-router-dom';
+import { MdLocationOn, MdEdit } from 'react-icons/md';
+import { FaTrash } from 'react-icons/fa';
 import price from '../utils/PriceConverter';
 
-const ListingItem = ({ listing }) => {
+const ListingItem = ({ listing, profile, onEdit, onDelete }) => {
   const { discountPrice } = listing;
+  const navigate = useNavigate();
+
+  const handleEdit = () => {
+    navigate(`/edit-listing/${listing.id}`);
+  };
+
+  const handleDelete = () => {
+    const result = confirm('Are you sure you want to delete?');
+    if (!result) return;
+
+    onDelete();
+  };
+
   return (
     <li className="bg-white flex flex-col justify-between shadow-md hover:shadow-xl rounded-md overflow-hidden transition-shadow duration-150 relative">
       <Link to={`/category/${listing.saleOrRent}/${listing.id}`}>
@@ -36,17 +50,20 @@ const ListingItem = ({ listing }) => {
             ${price(discountPrice || listing.price)}{' '}
             {listing.saleOrRent === 'rent' && '/ Month'}
           </div>
-          <div>
-            <div className="flex ite mt-[10px] gap-3">
+          <div className=" mt-[10px]">
+            <div className="flex ite gap-3">
               <p className="font-bold text-xs">{listing.bedRooms} Beds</p>
               <p className="font-bold text-xs">{listing.bathRooms} Baths</p>
-            </div>
-            <div>
-              <p>options</p>
             </div>
           </div>
         </div>
       </Link>
+      {profile && (
+        <div className="flex gap-3 absolute bottom-2.5 right-2.5 text-[14px]">
+          <MdEdit className="cursor-pointer" onClick={handleEdit} />
+          <FaTrash className="cursor-pointer text-red-500" onClick={handleDelete} />
+        </div>
+      )}
     </li>
   );
 };
