@@ -3,6 +3,7 @@ import { initializeApp } from 'firebase/app';
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -130,6 +131,10 @@ export const userListing = async () => {
   });
 
   return listings;
+};
+
+export const deleteListing = async (id) => {
+  await deleteDoc(doc(db, 'listings', id));
 };
 
 export const imageUpload = (file, progressCallback) => {
