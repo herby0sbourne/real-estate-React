@@ -126,8 +126,6 @@ const CreateListing = () => {
       notify('error', 'failed to create listing');
       console.log(error);
     }
-
-    console.log(updatedFormValues);
   };
   return (
     <main className="max-w-md px-2 mx-auto">
