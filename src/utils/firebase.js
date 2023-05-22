@@ -113,6 +113,16 @@ export const createListing = async (property = {}) => {
   return docRef;
 };
 
+export const updateListing = async (listing, id) => {
+  const docRef = doc(db, 'listings', id);
+
+  if (auth.currentUser.uid !== listing.userId) {
+    throw new Error('user not Authorized to update');
+  }
+
+  await updateDoc(docRef, { ...listing });
+};
+
 export const userListing = async () => {
   const listingRef = collection(db, 'listings');
 
@@ -135,6 +145,18 @@ export const userListing = async () => {
 
 export const deleteListing = async (id) => {
   await deleteDoc(doc(db, 'listings', id));
+};
+
+export const getListingById = async (id) => {
+  const docRef = doc(db, 'listings', id);
+
+  const docSnap = await getDoc(docRef);
+
+  if (!docSnap.exists()) {
+    throw new Error('no listing with that id found');
+  }
+
+  return docSnap.data();
 };
 
 export const imageUpload = (file, progressCallback) => {
