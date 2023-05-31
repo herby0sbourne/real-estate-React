@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import {Route, Routes} from 'react-router-dom';
 import Home from './pages/Home.jsx';
 import Profile from './pages/Profile.jsx';
 import SignIn from './pages/SignIn.jsx';
@@ -9,24 +9,27 @@ import CreateListing from './pages/CreateListing.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
 import Layout from './components/Layout.jsx';
 import EditListing from './pages/EditListing.jsx';
+import Listing from "./pages/Listing.jsx";
 
 // import './App.css';
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index element={<Home />} />
-        <Route element={<PrivateRoute />}>
-          <Route path="/profile" element={<Profile />} />
+      <Route path="/" element={<Layout/>}>
+        <Route index element={<Home/>}/>
+        <Route element={<PrivateRoute/>}>
+          <Route path="/profile" element={<Profile/>}/>
           {/* <Route path="/create-listing" element={<CreateListing />} /> */}
+          {/*<Route path="/edit-listing/:id" element={<EditListing />} />*/}
         </Route>
-        <Route path="/edit-listing/:id" element={<EditListing />} />
-        <Route path="/create-listing" element={<CreateListing />} />
-        <Route path="/sign-in" element={<SignIn />} />
-        <Route path="/sign-up" element={<SignUp />} />
-        <Route path="/offers" element={<Offers />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/edit-listing/:id" element={<EditListing/>}/>
+        <Route path="/category/:categoryName/:id" element={<Listing/>}/>
+        <Route path="/create-listing" element={<CreateListing/>}/>
+        <Route path="/sign-in" element={<SignIn/>}/>
+        <Route path="/sign-up" element={<SignUp/>}/>
+        <Route path="/offers" element={<Offers/>}/>
+        <Route path="/forgot-password" element={<ForgotPassword/>}/>
       </Route>
     </Routes>
   );
