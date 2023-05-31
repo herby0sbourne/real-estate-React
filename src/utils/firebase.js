@@ -1,5 +1,5 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from 'firebase/app';
+import {initializeApp} from 'firebase/app';
 import {
   addDoc,
   collection,
@@ -14,7 +14,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import {getStorage, ref, uploadBytesResumable, getDownloadURL} from 'firebase/storage';
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -29,7 +29,7 @@ import {
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: 'AIzaSyCJlfot39UqPknm4Ql4WAEqt7Of8YlXsrM',
+  apiKey: import.meta.env.VITE_GEOCODE_API_KEY,
   authDomain: 'real-estate-3de9f.firebaseapp.com',
   projectId: 'real-estate-3de9f',
   storageBucket: 'real-estate-3de9f.appspot.com',
@@ -46,12 +46,12 @@ export const db = getFirestore();
 export const signUpUserWithEmailAndPassword = async (name, email, password) => {
   if (!email || !password) return;
   const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-  updateProfile(auth.currentUser, { displayName: name });
+  updateProfile(auth.currentUser, {displayName: name});
   return userCredential;
 };
 
 export const signInUserWithEmailAndPassword = async (email, password) => {
-  if ((!email, !password)) return;
+  if ((!email || !password)) return;
 
   return await signInWithEmailAndPassword(auth, email, password);
 };
@@ -75,7 +75,7 @@ export const addUserToDatabase = async (userAuth, additionalData = {}) => {
   const userSnapshot = await getDoc(userDocRef);
 
   if (!userSnapshot.exists()) {
-    const { displayName, email } = userAuth;
+    const {displayName, email} = userAuth;
     const createdAt = new Date();
 
     try {
@@ -97,11 +97,11 @@ export const addUserToDatabase = async (userAuth, additionalData = {}) => {
 export const updateUserProfile = async (name) => {
   if (auth.currentUser.displayName !== name) {
     //update displayName in firebase auth
-    await updateProfile(auth.currentUser, { displayName: name });
+    await updateProfile(auth.currentUser, {displayName: name});
 
     // update name in the firestore database
     const docRef = doc(db, 'users', auth.currentUser.uid);
-    await updateDoc(docRef, { name: name });
+    await updateDoc(docRef, {name: name});
   }
 };
 
@@ -120,7 +120,7 @@ export const updateListing = async (listing, id) => {
     throw new Error('user not Authorized to update');
   }
 
-  await updateDoc(docRef, { ...listing });
+  await updateDoc(docRef, {...listing});
 };
 
 export const userListing = async () => {
@@ -137,7 +137,7 @@ export const userListing = async () => {
   const querySnapshot = await getDocs(q);
 
   querySnapshot.forEach((doc) => {
-    listings.push({ id: doc.id, ...doc.data() });
+    listings.push({id: doc.id, ...doc.data()});
   });
 
   return listings;
