@@ -8,6 +8,7 @@ import ForgotPassword from './pages/forgotPassword';
 import CreateListing from './pages/CreateListing.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
 import Layout from './components/Layout.jsx';
+import EditListing from './pages/EditListing.jsx';
 
 // import './App.css';
 
@@ -18,10 +19,12 @@ function App() {
         <Route index element={<Home />} />
         <Route element={<PrivateRoute />}>
           <Route path="/profile" element={<Profile />} />
+          {/* <Route path="/create-listing" element={<CreateListing />} /> */}
         </Route>
+        <Route path="/edit-listing/:id" element={<EditListing />} />
+        <Route path="/create-listing" element={<CreateListing />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
-        <Route path="/create-listing" element={<CreateListing />} />
         <Route path="/offers" element={<Offers />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
       </Route>
