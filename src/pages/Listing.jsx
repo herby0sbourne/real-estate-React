@@ -5,6 +5,7 @@ import { getListingById } from '../utils/firebase.js';
 import Spinner from '../components/Spinner.jsx';
 import Slider from '../components/Slider.jsx';
 import useToolTip from '../hooks/useToolTip.jsx';
+import ListingDetails from '../components/ListingDetails.jsx';
 
 const Listing = () => {
   const [listing, setListing] = useState(null);
@@ -42,6 +43,11 @@ const Listing = () => {
             Linked copied
           </p>
         )}
+      </div>
+      <div className="flex flex-col md:flex-row bg-white max-w-6xl lg:mx-auto p-4 rounded-lg shadow-lg lg:space-x-5 ">
+        {/* <div className="bg-pink-300 w-full h-[200px] lg-[400px]"></div> */}
+        <ListingDetails listing={listing} />
+        <div className="bg-blue-300 w-full h-[200px] lg-[400px] z-10 overflow-x-hidden"></div>
       </div>
     </div>
   );
